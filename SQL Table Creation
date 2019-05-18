@@ -1,4 +1,3 @@
-
 CREATE TABLE Player(playerID int, firstName char(50), lastName char(50), position char(50))
 
 CREATE TABLE Game(gameID int, visitingTeamCity char(50), visitingTeamName
