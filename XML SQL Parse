@@ -1,0 +1,44 @@
+DECLARE @Input AS XML, @xDoc INT
+SELECT @Input = XMLData FROM XMLTable WHERE XMLDesc = ‘All Roster’
+EXEC sp_xml_preparedocument @xDoc OUTPUT, @Input
+INSERT INTO Player(playerID, firstName, lastName, position)
+SELECT playerID firstName, lastName, position
+FROM OPENXML(@xDoc, ‘sports-statistics/sports-rosters/nba-rosters/nba-roster/nba-player’)
+WITH(playerID int ‘player-code/@global-id’, firstName [char](50) ‘name/@first-name’, lastName [char](50) ‘name/@last-name’, position [char](50) ‘player-position/@position’)
+EXEC sp_xml_removedocument @xDoc 
+
+DECLARE @Input AS XML, @xDoc INT
+SELECT @Input = XMLData FROM XMLTable WHERE XMLDesc = ‘Schedule’
+EXEC sp_xml_preparedocument @xDoc OUTPUT, @Input
+INSERT INTO Game(gameID, visitingTeamCity, visitingTeamName, homeTeamCity, homeTeamName)
+SELECT gameID, visitingTeamCity, visitingTeamName, homeTeamCity, homeTeamName
+FROM OPENXML(@xDoc, ‘sports-statistics/sports-schedule/nba-schedule/game-schedule’)
+WITH(gameID int ‘gamecode/@global-id’, visitingTeamCity [char](50) ‘visiting-team/team-city/@city’, visitingTeamName [char](50) ‘visiting-team/team-name/@name’, homeTeamCity [char](50) ‘home-team/team-city/@city’, homeTeamName [char](50) ‘home-team/team-name/@name’)
+EXEC sp_xml_removedocument @xDoc
+
+DECLARE @Input AS XML, @xDoc INT
+SELECT @Input = XMLData FROM XMLTable WHERE XMLDesc = ‘Final Box, Game 1348883’
+EXEC sp_xml_preparedocument @xDoc OUTPUT, @Input
+INSERT INTO FinalBox(playerID, gameID, playResult, playPoints, defenderID, defenderDist)
+SELECT playerID, gameID, playResult, playPoints, defenderID, defenderDist
+FROM OPENXML(@xDoc, ‘sports-statistics/sports-schedule/nba-boxscores/nba-boxscore/players/player/shot-log/shot’)
+WITH(playerID int ‘../../player-code/@global-id’, gameID int ‘../../../../gamecode/@global-id’, playResult [char](30) ‘@result’, playPoints int ‘@points-type’, defenderID int ‘closest-defender/@global-player-id’, defenderDist [nvarchar](10) ‘closest-defender/@defender-distance’)
+EXEC sp_xml_removedocument @xDoc
+
+DECLARE @Input AS XML, @xDoc INT
+SELECT @Input = XMLData FROM XMLTable WHERE XMLDesc = ‘Final PBP, Game 1348878’
+EXEC sp_xml_preparedocument @xDoc OUTPUT, @Input
+INSERT INTO FinalPBP(playerID, gameID, timeMin, timeSec, gameQuarter, eventID, eventDesc, detailID, detailDesc, shotXcoord, shotYcoord, textDesc)
+SELECT playerID, gameID, timeMin, timeSec, gameQuarter, eventID, eventDesc, detailID, detailDesc, shotXcoord, shotYcoord, textDesc
+FROM OPENXML(@xDoc, ‘sports-statistics/sports-scores/nba-scores/nba-playbyplay/play’)
+WITH(playerID int ‘@global-player-id-1’, gameID int ‘../gamecode/@global-id’, timeMin int ‘@time-minutes’, timeSec float ‘@time-seconds’,  gameQuarter int ‘@quarter’, eventID int ‘@event-id’, eventDesc [varchar](100) ‘@event-description’, detailID int ‘@detail-id, detailDesc [varchar](100) ‘detail-description’, shotXcoord float ‘@x-shot-coord’, shotYcoord float ‘@y-shot-coord’, textDesc [varchar](100) ‘@textual-description’)
+EXEC sp_xml_removedocument @xDoc
+
+DECLARE @Input AS XML, @xDoc INT
+SELECT @Input = XMLData FROM XMLTable WHERE XMLDesc = ‘Final Seq PBP, Game 1348907’
+EXEC sp_xml_preparedocument @xDoc OUTPUT, @Input
+INSERT INTO FinalSeqPBP(playerID, gameID, eventID, pbpID, gameClock, newGameClock, shotClock, gameQuarter)
+SELECT playerID, gameID, eventID, pbpID, gameClock, shotClock, gameQuarter
+FROM OPENXML(@xDoc, ‘sports-statistics/sports-boxscores/nba-boxscores/nba-boxscore/sequence-pbp/moment’)
+WITH(playerID int ‘@global-player-id’, gameID int ‘../../gamecode/@global-id’, eventID int ‘@event-id’, pbpID int ‘@pbp-seq-number’, gameClock float ‘@game-clock’, shotClock float ‘@shot-clock’, gameQuarter int ‘../@period’)
+EXEC sp_xml_removedocument @xDoc
