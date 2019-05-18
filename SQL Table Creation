@@ -1,4 +1,12 @@
 CREATE TABLE Player(playerID int, firstName char(50), lastName char(50), position char(50))
 
-&gt;CREATE TABLE Game(gameID int, visitingTeamCity char(50), visitingTeamName
+CREATE TABLE Game(gameID int, visitingTeamCity char(50), visitingTeamName
 char(50), homeTeamCity char(50), homeTeamName char(50))
+
+CREATE TABLE XMLTable(XMLData xml, XMLDesc char(50), LoadedDateTime datetime)
+
+CREATE TABLE FinalBox(playerID int, globalPlayerID int, gameID int, playResult char(30), playPoints int, defenderID int, defenderDist float
+
+CREATE TABLE FinalPBP(playerID int, gameID int, timeMin float, timeSec float, gameQuarter int, eventID int, eventDesc varchar(50), detailID int, detailDesc varchar(50), shotXcoord float, shotYcoord float, textDesc varchar(100)) 
+
+CREATE TABLE FinalSeqPBP(playerID int, gameID int, eventID int, pbpID int, gameClock float, shot clock float, gameQuarter int) 
