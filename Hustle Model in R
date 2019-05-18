@@ -1,0 +1,59 @@
+##Create new .csv with gameID, gameClock, shotClock, eventID, playResult, hustleStat, distTarget, ball locations, and player locations mapped from FinalPBP, FinalSeq, and FinalSeqPBP
+
+library(shotGroups, verbose = FALSE)
+dfGroups <- read.csv(“<FileName>.csv”, header = TRUE)
+
+##Screen Assists – playResult FGM, distTarget teammate with FGM
+##Charges Drawn – playResult Offensive Foul-Charge, distTarget opponent with foul
+##Loose Ball Recovered – playResult TOV, distTarget ball location 
+##Deflection – no playResult, distTarget ball location
+
+##Calculations of Points Produced & Points Allowed
+
+Points Produced = (FG_Part + AST_Part + Hustle_Part + FTM) * (1- (Team_ORB / Team_ScPoss) * Team_ORB_Weight * Team_Play%) + ORB_Part
+
+qHustle_AST = ((MP / Team_MP / 5)) * (q5Hustle * ((Team_ Screen AST  – Screen AST) / Team_FGM))) + ((((Team_Screen AST / Team_MP) * MP * 5 – Screen AST) / ((Team_FGM / Team_MP) * MP * 5 – FGM)) * (1 – (MP / Team_MP / 5))))
+
+ q5Hustle  = ∑_(i≠n)▒〖Screen AST〗_i/(∑_(k≠i)▒〖FGM〗_k )  OR    1.14 
+
+FG_Part = 2 * (FGM + 0.5 * 3PM) * (1 – 0.5 * ((PTS – FTM) / (2 * FGA)) * (qAST * qHustle_AST
+
+qAST = ((MP / Team_MP / 5)) * (q5 * ((Team_AST  – AST) / Team_FGM))) + ((((Team_AST / Team_MP) * MP * 5 – AST) / ((Team_FGM / Team_MP) * MP * 5 – FGM)) * (1 – (MP / Team_MP / 5))))
+
+q5 = ∑_(i≠n)▒〖AST〗_i/(∑_(k≠i)▒〖FGM〗_k )  OR    1.14
+
+AST_Part = 2 * ((Team_FGM – FGM + 0.5 * (Team_3PM – 3PM)) / (Team_FGM – FGM)) * 0.5 * (((Team_PTS – Team_FTM) – (PTS –FTM)) / (2 * (Team_FGA – FGA))) * AST
+
+Hustle_Part = 2 * ((Team_FGM – FGM + 0.5 * (Team_3PM – 3PM)) / (Team_FGM – FGM)) * (1 – (Screen AST / FGA)) * ((Team_PTS – Team_FTM) – (PTS – FTM)) / (2 * (Team_FGA – FGA))) * Screen AST
+
+Hustle_Part In Words = Teammates FGM Weight * Ratio of Teammates Effective FGM : Teammates FGM * Failure of Screen Assists * Ratio of Teammates FG Points : Teammates FGA Weight * Screen AST
+
+Team_ScPoss = Team_FGM + (1- (1- (Team_FTM / Team_FTA))2 ) * Team_FTA * 0.4
+
+Team_ORB_Weight = ((1 – Team_ORB%) * Team_Play%) / ((1 – Team_ORB%) * Team_Play% + Team_ORB% * (1 – Team_Play%)) 
+
+Team_Play% = Team_Scoring_Poss / (Team_FGA + Team_FTA * 0.4 + Team_TOV) 
+
+ORB_Part = ORB * Team_ORB_Weight * Team_Play% * (Team_PTS / (Team_FGM + (1- (1- (Team_FTM / Team_FTA))2) * 0.4 * Team_FTA))
+
+PAllowed = ((DRtg / 100) * (0.2 * ((MP / (Team_MP / 5)) * Team_Poss)))
+
+DRtg = Team_DRtg + 0.2 * (100 * D_PTS _ScPoss * (1 – Stop%) – Team_DRtg) 
+
+Stop% = (Stops * Opp_MP) / (Team_Poss * MP)
+
+Stops = Hustle_Stops + Defensive_Stops
+
+Hustle_Stops = (Contested 2’s + Contested 3’s) * ((Contested 2’s Missed + (0.5 * Contested 3’s Missed)) / Opp_FGA) + (Charges Drawn + Loose Balls Recovered) * (1 – Opp_Play%) + Deflections * ((1 – (Opp_TOV – Team_STL – Team_Charges Drawn)) / Opp_Poss) 
+
+Hustle_Stops in Words = Contested Shots * Probability of Opponent Forced Miss on Contested Shots + Hustle Change of Possession * Opponent Non-Scoring Plays + Deflections * Forced Turnover Possessions
+
+Defensive Stops = (STL + BLK * FMwt * (1 – 1.07 * Opp_ORB%) + DREB (1 – FMwt)) + ((((Opp_FGA – Opp_FGM – Team_BLK) / Team_MP) * FMwt * (1 – 1.07 * Opp_ORB%) + ((Opp_TOV – Team_STL – Team_Charges Drawn) / Team_MP)) * MP + (PF / Team_PF) * 0.4 * Opp_FTA * (1- (Opp_FTM / Opp_FTA))2)
+
+FMwt = ((Opp_FG% * ((Contested 2’s Missed + (0.5 * Contested 3’s Missed)) / Opp_FGA)) * (1-Opp_ORB%)) / ((Opp_FG% * ((Contested 2’s Missed + (0.5 * Contested 3’s Missed)) / Opp_FGA)) * (1-Opp_ORB%) + (1-(Opp_FG% * ((Contested 2’s Missed + (0.5 * Contested 3’s Missed)) / Opp_FGA))) * Opp_ORB%) 
+
+Team_DRtg = 100 * (Opp_PTS / Team_Poss) 
+
+Team_Poss = 0.5 * ((Team_FGA + 0.4 * Team_FTA – 1.07 * (Team_ORB / (Team_ORB + Opp_DRB)) * (Team_FGA – Team_FGM) + Team_TOV) + (Opp_FGA + 0.4 * Opp_FTA – 1.07 * (Opp_ORB / (Opp_ORB + Team_DRB)) * (Opp_FGA – Opp_FGM) + Opp_TOV)) 
+
+D_PTS_ScPoss = Opp_PTS / (Opp_FGM + (1- (1- (Opp_FTM / Opp_FTA))2) * Opp_FTA * 0.4)
