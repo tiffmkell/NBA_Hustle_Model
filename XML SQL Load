@@ -1,0 +1,23 @@
+INSERT INTO XMLTable(XMLData, XMLDesc, LoadedDateTime)
+SELECT CONVERT(XML, BulkColumn) AS BulkColumn, ‘All Roster’, GETDATE() 
+FROM OPENROWSET(BULK ‘F:\SportVu\2013-2014\NBA_ALL_ROSTER.XML’, SINGLE_BLOB) AS x;
+
+INSERT INTO XMLTable(XMLData, XMLDesc, LoadedDateTime)
+SELECT CONVERT(XML, BulkColumn) AS BulkColumn, ‘Schedule’, GETDATE() 
+FROM OPENROWSET(BULK ‘F:\SportVu\2013-2014\NBA_SCHEDULE.XML’, SINGLE_BLOB) AS x;
+
+INSERT INTO XMLTable(XMLData, XMLDesc, LoadedDateTime)
+SELECT CONVERT(XML, BulkColumn) AS BulkColumn, ‘Final Box, Game ID’, GETDATE() 
+FROM OPENROWSET(BULK ‘All Game Box Scores File Path’, SINGLE_BLOB) AS x;
+
+INSERT INTO XMLTable(XMLData, XMLDesc, LoadedDateTime)
+SELECT CONVERT(XML, BulkColumn) AS BulkColumn, ‘Final PBP, Game ID’, GETDATE() 
+FROM OPENROWSET(BULK ‘All Game Play By Plays File Path’, SINGLE_BLOB) AS x;
+
+INSERT INTO XMLTable(XMLData, XMLDesc, LoadedDateTime)
+SELECT CONVERT(XML, BulkColumn) AS BulkColumn, ‘Final Seq, Game ID, Quarter #’, GETDATE() 
+FROM OPENROWSET(BULK ‘All Game, Quarter Sequences File Path’, SINGLE_BLOB) AS x;
+
+INSERT INTO XMLTable(XMLData, XMLDesc, LoadedDateTime)
+SELECT CONVERT(XML, BulkColumn) AS BulkColumn, ‘Final Seq PBP, Game’, GETDATE() 
+FROM OPENROWSET(BULK ‘All Game Sequences Play By Plays File Path’, SINGLE_BLOB) AS x;
