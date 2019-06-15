@@ -8,6 +8,7 @@ dfGroups <- read.csv(“<FileName>.csv”, header = TRUE)
 ##Loose Ball Recovered – playResult TOV, distTarget ball location 
 ##Deflection – no playResult, distTarget ball location
 
+## ONLY CALCULATIONS
 ##Calculations of Points Produced & Points Allowed
 
 Points Produced = (FG_Part + AST_Part + Hustle_Part + FTM) * (1- (Team_ORB / Team_ScPoss) * Team_ORB_Weight * Team_Play%) + ORB_Part
